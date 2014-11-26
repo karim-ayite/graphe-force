@@ -97,7 +97,7 @@ public class Affichage extends JPanel implements ActionListener, MouseListener, 
 			int matriceTMP[][]= new int [gForce.nbSommets][gForce.nbSommets];
 			for (int j=0; j<gForce.nbSommets-1; j++) {
 				for(int k=0; k<gForce.nbSommets-1; k++) {
-					matriceTMP[j][k] = gForce.mAdjacence[j][k];
+					matriceTMP[j][k] = gForce.matriceAdjacence[j][k];
 				}
 			}
 			gForce.setMAdjacence(matriceTMP);

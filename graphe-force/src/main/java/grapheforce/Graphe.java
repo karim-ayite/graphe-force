@@ -7,7 +7,7 @@ import java.util.Vector;
 public class Graphe implements Runnable {
 	protected int encours=-1;
 	int nbSommets;
-	int[][] mAdjacence;
+	int[][] matriceAdjacence;
 	ArrayList<Sommet> sommets;
 	ArrayList<int[]> aretes;
 	int[] netForce;
@@ -29,7 +29,7 @@ public class Graphe implements Runnable {
 		
 		Random haz=new Random();
 		nbSommets=n;
-		mAdjacence = new int[nbSommets][nbSommets];
+		matriceAdjacence = new int[nbSommets][nbSommets];
 		sommets = new ArrayList<Sommet>();
 		aretes = new ArrayList<int[]>();
 		for (int i=0;i<nbSommets;i++)
@@ -40,8 +40,8 @@ public class Graphe implements Runnable {
 				{
 					if (haz.nextInt(10000)>7500)
 					{
-						mAdjacence[i][j]=1;
-						mAdjacence[j][i]=1;
+						matriceAdjacence[i][j]=1;
+						matriceAdjacence[j][i]=1;
 						arete=new int[2];
 						arete[0]=i;
 						arete[1]=j;
@@ -50,8 +50,8 @@ public class Graphe implements Runnable {
 				}
 				else
 				{
-					mAdjacence[i][j]=0;
-					mAdjacence[j][i]=0;
+					matriceAdjacence[i][j]=0;
+					matriceAdjacence[j][i]=0;
 				}
 			}
 		}
@@ -71,8 +71,8 @@ public class Graphe implements Runnable {
 	}
 	
 	public void setArete(int i,int j,int r){
-		mAdjacence[i][j]=r;
-		mAdjacence[j][i]=r;
+		matriceAdjacence[i][j]=r;
+		matriceAdjacence[j][i]=r;
 	}
 
 	public void setNbSommets(int nbSommets) {
@@ -80,11 +80,11 @@ public class Graphe implements Runnable {
 	}
 
 	public int[][] getMAdjacence() {
-		return mAdjacence;
+		return matriceAdjacence;
 	}
 
 	public void setMAdjacence(int[][] adjacence) {
-		mAdjacence = adjacence;
+		matriceAdjacence = adjacence;
 	}
 
 	public ArrayList<Sommet> getSommets() {
@@ -153,62 +153,50 @@ public class Graphe implements Runnable {
 	}
 	
 	public void forceAlgo()
-	{
+ {
 		double[] netForce = new double[2];
 		double totalKineticEnergy = 100;
-		for (int i=0;i<this.getNbSommets();i++)
-		{
-			if (i != encours){
-			sommets.get(i).dx=0;
-			sommets.get(i).dy=0;
+		for (int i = 0; i < this.getNbSommets(); i++) {
+			if (i != encours) {
+				sommets.get(i).dx = 0;
+				sommets.get(i).dy = 0;
 			}
 		}
-		//while (totalKineticEnergy > 3)
-		//{//
-			totalKineticEnergy = 0;
-			
-			
-			
-			for (int i=0;i<this.getNbSommets();i++)
-			{
-				if (i != encours){
-				netForce[0]=0;
-				netForce[1]=0;
-				
-				Sommet s=sommets.get(i);
-				
-				for (int j = 0;j<this.getNbSommets();j++)
-				{
-					//if (s.getX()<800 && s.getY()<600 && s.getX()>0 && s.getY()>0)
-					//{//
+
+		totalKineticEnergy = 0;
+
+		for (int i = 0; i < this.getNbSommets(); i++) {
+			if (i != encours) {
+				netForce[0] = 0;
+				netForce[1] = 0;
+
+				Sommet s = sommets.get(i);
+
+				for (int j = 0; j < this.getNbSommets(); j++) {
 					Sommet t = sommets.get(j);
-					
-					if (i!=j)
-					{
-						double[] rep = coulombRepulsion(s,t);
+
+					if (i != j) {
+						double[] rep = coulombRepulsion(s, t);
 						netForce[0] = netForce[0] + rep[0];
 						netForce[1] = netForce[1] + rep[1];
 					}
 				}
-				//}//
-				
-				for (int k = 0;k<this.getAretes().size();k++)
-				{
+
+				for (int k = 0; k < this.getAretes().size(); k++) {
 					int[] a = aretes.get(k);
-					if (a[0]==i || a[1]==i)
-					{
-						double[] att=hookeAttraction(i,a);
+					if (a[0] == i || a[1] == i) {
+						double[] att = hookeAttraction(i, a);
 						netForce[0] = netForce[0] + att[0];
 						netForce[1] = netForce[1] + att[1];
-					}	
+					}
 				}
-				
-				s.dx = ( s.dx + timestep * netForce[0]) * damping;
-				s.dy = ( s.dy + timestep * netForce[1]) * damping;
-				
+
+				s.dx = (s.dx + timestep * netForce[0]) * damping;
+				s.dy = (s.dy + timestep * netForce[1]) * damping;
+
 				s.x = s.x + timestep * s.dx;
 				s.y = s.y + timestep * s.dy;
-				
+
 			}
 		}
 	}
